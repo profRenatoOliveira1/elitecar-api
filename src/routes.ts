@@ -18,6 +18,8 @@ router.get("/", (req: Request, res: Response) => {
 router.get("/api/carros", CarroController.todos);
 // Retorna um carro com ID específico
 router.get("/api/carros/:idCarro", CarroController.carro);
+// Insere um novo carro no banco
+router.post("/api/carros", CarroController.novo);
 
 /**
  * Endpoints (rotas) para Clientes

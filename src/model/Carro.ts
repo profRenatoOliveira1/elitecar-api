@@ -196,6 +196,52 @@ class Carro {
             return null;
         }
     }
+
+    /**
+     * Insere um carro no banco de dados
+     * 
+     * @param carro objeto a ser inserido no banco
+     * @returns **true** caso a inserção tenha sido feita, **false** em caso de erro
+     */
+    static async cadastrarCarro(carro: CarroDTO): Promise<boolean> {
+        try {
+            // Define a query SQL para inserir um novo carro na tabela 'carros'
+            // Os valores serão passados como parâmetros ($1, $2, $3, $4)
+            // O comando RETURNING retorna o id_carro gerado automaticamente pelo banco
+            const queryInsertCarro = `INSERT INTO carros (marca, modelo, ano, cor)
+                                VALUES
+                                ($1, $2, $3, $4)
+                                RETURNING id_carro;`;
+
+            // Executa a query no banco de dados, passando os valores do carro como parâmetros
+            // Usa toUpperCase() para padronizar os textos e parseInt() para garantir que o ano seja um número
+            const respostaBD = await database.query(queryInsertCarro, [
+                carro.marca.toUpperCase(),
+                carro.modelo.toUpperCase(),
+                parseInt(carro.ano),
+                carro.cor.toUpperCase()
+            ]);
+
+            // Verifica se a resposta do banco contém pelo menos uma linha (ou seja, se o carro foi inserido)
+            if (respostaBD.rows.length > 0) {
+                // Exibe no console uma mensagem de sucesso com o ID do carro cadastrado
+                console.info(`Carro cadastrado com sucesso. ID: ${respostaBD.rows[0].id_carro}`);
+
+                // Retorna true indicando que o cadastro foi realizado com sucesso
+                return true;
+            }
+
+            // Se nenhuma linha foi retornada, significa que o cadastro falhou
+            // Retorna false indicando falha na operação
+            return false;
+        } catch (error) {
+            // Em caso de erro na execução da query, exibe uma mensagem de erro no console
+            console.error(`Erro na consulta ao banco de dados. ${error}`);
+
+            // Retorna false indicando que houve uma falha na operação
+            return false;
+        }
+    }
 }
 
 export default Carro
