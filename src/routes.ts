@@ -1,5 +1,7 @@
 import type { Request, Response } from "express"; // Importa módulo Request e Response do pacote Express
 import { Router } from "express"; // Importa o módulo Router do pacote Express
+import CarroController from "./controller/CarroController.js";
+import ClienteController from "./controller/ClienteController.js";
 
 const router = Router(); // Cria um novo roteador
 
@@ -8,5 +10,21 @@ const router = Router(); // Cria um novo roteador
 router.get("/", (req: Request, res: Response) => {
     res.status(200).json({ mensagem: "Se você está vendo essa mensagem, seu servidor está funcionando." });
 });
+
+/**
+ * Endpoints (rotas) para Carros
+ */
+// Retorna a lista com todos os carros
+router.get("/api/carros", CarroController.todos);
+// Retorna um carro com ID específico
+router.get("/api/carros/:idCarro", CarroController.carro);
+
+/**
+ * Endpoints (rotas) para Clientes
+ */
+// Retorna a lista com todos os clientes
+router.get("/api/clientes", ClienteController.todos);
+// Retorna um cliente com o ID específico
+router.get("/api/clientes/:idCliente", ClienteController.cliente);
 
 export { router }; // Exporta do roteador

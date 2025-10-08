@@ -1,3 +1,13 @@
+import type { ClienteDTO } from "../interfaces/ClienteDTO.js"; // Importa a interface do DTO
+import { DatabaseModel } from "./DatabaseModel.js"; // Importa a classe DatabaseModel para realizar a conexão com o banco de dados
+
+const database = new DatabaseModel().pool; //Inicializa o pool de conexões com o banco de dados
+
+/*
+* Classe Cliente representa um modelo de cliente com seus atributos principais (nome, cpf, telefone e ID).
+* Permite criar objetos de cliente, acessar e modificar seus dados, e consultar informações no banco de dados.
+* Inclui métodos estáticos para listar todos os clientes ou buscar um carro específico pelo ID.
+*/
 class Cliente {
 
     /* Atributos */
@@ -80,6 +90,69 @@ class Cliente {
      */
     public setTelefone(telefone: string): void {
         this.telefone = telefone;
+    }
+
+    public toDTO(): ClienteDTO {
+        return {
+            idCliente: this.idCliente,
+            nome: this.nome,
+            cpf: this.cpf,
+            telefone: this.telefone
+        }
+    }
+
+    static async listarClientes(): Promise<Array<Cliente> | null> {
+        try {
+            let listaDeClientes: Array<Cliente> = [];
+
+            const querySelectClientes = `SELECT * FROM clientes;`;
+
+            const respostaBD = await database.query(querySelectClientes);
+
+            respostaBD.rows.forEach((clienteBD) => {
+                const novoCliente: Cliente = new Cliente(
+                    clienteBD.nome,
+                    clienteBD.cpf,
+                    clienteBD.telefone
+                )
+
+                novoCliente.setIdCliente(clienteBD.id_cliente);
+
+                listaDeClientes.push(novoCliente);
+            });
+
+            return listaDeClientes;
+        } catch (error) {
+            console.error(`Erro na consulta ao banco de dados. ${error}`);
+            return null;
+        }
+    }
+
+    static async listarCliente(idCliente: number): Promise<Cliente | null> {
+        try {
+            let cliente: Cliente | null = null;
+
+            const querySelectCliente = `SELECT * FROM clientes WHERE id_cliente=$1;`;
+
+            const respostaBD = await database.query(querySelectCliente, [idCliente]);
+
+            respostaBD.rows.forEach((clienteBD) => {
+                const novoCliente: Cliente = new Cliente(
+                    clienteBD.nome,
+                    clienteBD.cpf,
+                    clienteBD.telefone
+                );
+
+                novoCliente.setIdCliente(clienteBD.id_cliente);
+
+                cliente = novoCliente;
+            });
+
+            return cliente;
+        } catch (error) {
+            console.error(`Erro na consulta ao banco de dados. ${error}`);
+            return null;
+        }
     }
 }
 
