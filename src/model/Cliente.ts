@@ -101,56 +101,88 @@ class Cliente {
         }
     }
 
+    /**
+     * Retorna os clientes cadastrados no banco de dados
+     * @returns Lista com clientes cadastrados
+     * @returns valor nulo em caso de erro na consulta
+     */
     static async listarClientes(): Promise<Array<Cliente> | null> {
         try {
+            // Cria uma lista vazia que irá armazenar os objetos do tipo Cliente
             let listaDeClientes: Array<Cliente> = [];
 
+            // Define a consulta SQL que irá buscar todos os registros da tabela 'clientes'
             const querySelectClientes = `SELECT * FROM clientes;`;
 
+            // Executa a consulta no banco de dados e aguarda a resposta
             const respostaBD = await database.query(querySelectClientes);
 
+            // Percorre cada linha retornada pela consulta
             respostaBD.rows.forEach((clienteBD) => {
-                const novoCliente: Cliente = new Cliente(
-                    clienteBD.nome,
-                    clienteBD.cpf,
-                    clienteBD.telefone
-                )
-
-                novoCliente.setIdCliente(clienteBD.id_cliente);
-
-                listaDeClientes.push(novoCliente);
-            });
-
-            return listaDeClientes;
-        } catch (error) {
-            console.error(`Erro na consulta ao banco de dados. ${error}`);
-            return null;
-        }
-    }
-
-    static async listarCliente(idCliente: number): Promise<Cliente | null> {
-        try {
-            let cliente: Cliente | null = null;
-
-            const querySelectCliente = `SELECT * FROM clientes WHERE id_cliente=$1;`;
-
-            const respostaBD = await database.query(querySelectCliente, [idCliente]);
-
-            respostaBD.rows.forEach((clienteBD) => {
+                // Cria um novo objeto Cliente usando os dados da linha atual (nome, cpf, telefone)
                 const novoCliente: Cliente = new Cliente(
                     clienteBD.nome,
                     clienteBD.cpf,
                     clienteBD.telefone
                 );
 
+                // Define o ID do cliente usando o valor retornado do banco
                 novoCliente.setIdCliente(clienteBD.id_cliente);
 
+                // Adiciona o novo cliente à lista de clientes
+                listaDeClientes.push(novoCliente);
+            });
+
+            // Retorna a lista completa de clientes
+            return listaDeClientes;
+        } catch (error) {
+            // Em caso de erro na execução da consulta, exibe uma mensagem no console
+            console.error(`Erro na consulta ao banco de dados. ${error}`);
+
+            // Retorna null para indicar que houve uma falha na operação
+            return null;
+        }
+    }
+
+    /**
+     * Retorna informações de um cliente com base no ID
+     * @param idCliente id do cliente a ser buscado
+     * @returns Cliente selecionado
+     */
+    static async listarCliente(idCliente: number): Promise<Cliente | null> {
+        try {
+            // Inicializa a variável cliente como null. Ela será preenchida com os dados do cliente encontrado no banco.
+            let cliente: Cliente | null = null;
+
+            // Define a consulta SQL que busca um cliente específico pelo ID.
+            const querySelectCliente = `SELECT * FROM clientes WHERE id_cliente=$1;`;
+
+            // Executa a consulta no banco de dados, passando o idCliente como parâmetro.
+            const respostaBD = await database.query(querySelectCliente, [idCliente]);
+
+            // Percorre os resultados retornados pela consulta (espera-se apenas um cliente).
+            respostaBD.rows.forEach((clienteBD) => {
+                // Cria um novo objeto Cliente com os dados retornados do banco (nome, cpf, telefone).
+                const novoCliente: Cliente = new Cliente(
+                    clienteBD.nome,
+                    clienteBD.cpf,
+                    clienteBD.telefone
+                );
+
+                // Define o ID do cliente usando o valor retornado do banco.
+                novoCliente.setIdCliente(clienteBD.id_cliente);
+
+                // Atribui o novo cliente à variável cliente.
                 cliente = novoCliente;
             });
 
+            // Retorna o cliente encontrado ou null se não houver resultado.
             return cliente;
         } catch (error) {
+            // Em caso de erro na execução da consulta, exibe uma mensagem no console.
             console.error(`Erro na consulta ao banco de dados. ${error}`);
+
+            // Retorna null para indicar que houve uma falha na operação.
             return null;
         }
     }
