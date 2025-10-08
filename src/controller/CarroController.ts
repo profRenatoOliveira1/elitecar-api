@@ -90,7 +90,7 @@ class CarroController extends Carro {
         try {
             // Extrai os dados enviados pelo cliente na requisição HTTP (normalmente via POST)
             // Esses dados devem estar no corpo da requisição e seguir o formato da interface CarroDTO
-            const dadosRecebidosCliente: CarroDTO = req.body;
+            const dadosRecebidosCarro: CarroDTO = req.body;
 
             // Define um array com os nomes dos campos obrigatórios (idCarro fica de fora)
             // 'as const' transforma o array em uma tupla de literais, útil para inferência de tipo
@@ -99,7 +99,7 @@ class CarroController extends Carro {
             // Cria uma lista com os campos que estão inválidos (undefined, null ou string vazia)
             const camposInvalidos = camposObrigatorios.filter(campo => {
                 // Pega o valor do campo específico do DTO dinamicamente
-                const valor = dadosRecebidosCliente[campo];
+                const valor = dadosRecebidosCarro[campo];
 
                 // Considera inválido quando:
                 // - valor === undefined (campo não enviado)
@@ -118,7 +118,7 @@ class CarroController extends Carro {
 
             // Chama o método cadastrarCarro da classe Carro, passando os dados recebidos
             // Esse método deve inserir o carro no banco de dados e retornar true ou false
-            const respostaModelo = await Carro.cadastrarCarro(dadosRecebidosCliente);
+            const respostaModelo = await Carro.cadastrarCarro(dadosRecebidosCarro);
 
             // Verifica se o cadastro foi bem-sucedido
             if (respostaModelo) {

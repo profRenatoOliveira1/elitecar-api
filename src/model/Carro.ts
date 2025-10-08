@@ -216,10 +216,10 @@ class Carro {
             // Executa a query no banco de dados, passando os valores do carro como parâmetros
             // Usa toUpperCase() para padronizar os textos e parseInt() para garantir que o ano seja um número
             const respostaBD = await database.query(queryInsertCarro, [
-                carro.marca.toUpperCase(),
-                carro.modelo.toUpperCase(),
-                parseInt(carro.ano),
-                carro.cor.toUpperCase()
+                carro.marca.toUpperCase(), // marca do carro em letra maiúscula
+                carro.modelo.toUpperCase(), // modelo do carro em letra maiúscula
+                parseInt(carro.ano),        // ano do carro convertido em inteiro
+                carro.cor.toUpperCase()     // cor do carro em letra maiúscula
             ]);
 
             // Verifica se a resposta do banco contém pelo menos uma linha (ou seja, se o carro foi inserido)

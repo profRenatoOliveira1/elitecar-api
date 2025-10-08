@@ -186,6 +186,52 @@ class Cliente {
             return null;
         }
     }
+
+    /**
+     * Insere um cliente no banco de dados
+     * 
+     * @param cliente objeto a ser inserido no banco
+     * @returns **true** caso a inserção tenha sido feita, **false** em caso de erro
+     */
+    static async cadastrarCliente(cliente: ClienteDTO): Promise<boolean> {
+        try {
+            // Define a query SQL para inserir um novo cliente na tabela 'cliente'
+            // Os valores serão passados como parâmetros ($1, $2, $3)
+            // O comando RETURNING retorna o id_cliente gerado automaticamente pelo banco
+            const queryInsertCliente = `INSERT INTO clientes (nome, cpf, telefone)
+                                VALUES
+                                ($1, $2, $3)
+                                RETURNING id_cliente;`;
+
+            // Executa a query no banco de dados, passando os dados do cliente como parâmetros
+            // Usa toUpperCase() para padronizar o nome em letras maiúsculas
+            const respostaBD = await database.query(queryInsertCliente, [
+                cliente.nome.toUpperCase(), // Nome do cliente em maiúsculas
+                cliente.cpf,                // CPF do cliente
+                cliente.telefone            // Telefone do cliente
+            ]);
+
+            // Verifica se a resposta do banco contém pelo menos uma linha
+            // Isso indica que o cliente foi inserido com sucesso
+            if (respostaBD.rows.length > 0) {
+                // Exibe no console uma mensagem de sucesso com o ID do cliente cadastrado
+                console.info(`Cliente cadastrado com sucesso. ID: ${respostaBD.rows[0].id_cliente}`);
+
+                // Retorna true indicando que o cadastro foi realizado com sucesso
+                return true;
+            }
+
+            // Se nenhuma linha foi retornada, significa que o cadastro falhou
+            // Retorna false indicando falha na operação
+            return false;
+        } catch (error) {
+            // Em caso de erro na execução da query, exibe uma mensagem de erro no console
+            console.error(`Erro na consulta ao banco de dados. ${error}`);
+
+            // Retorna false indicando que houve uma falha na operação
+            return false;
+        }
+    }
 }
 
 export default Cliente;

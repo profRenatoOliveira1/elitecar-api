@@ -28,5 +28,7 @@ router.post("/api/carros", CarroController.novo);
 router.get("/api/clientes", ClienteController.todos);
 // Retorna um cliente com o ID específico
 router.get("/api/clientes/:idCliente", ClienteController.cliente);
+// Insere um novo carro no banco
+router.post("/api/clientes", ClienteController.novo);
 
 export { router }; // Exporta do roteador
