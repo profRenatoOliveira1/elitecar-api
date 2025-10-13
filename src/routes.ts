@@ -20,6 +20,8 @@ router.get("/api/carros", CarroController.todos);
 router.get("/api/carros/:idCarro", CarroController.carro);
 // Insere um novo carro no banco
 router.post("/api/carros", CarroController.novo);
+// Atualiza um carro no banco
+router.put("/api/carros/:idCarro", CarroController.atualizar)
 
 /**
  * Endpoints (rotas) para Clientes

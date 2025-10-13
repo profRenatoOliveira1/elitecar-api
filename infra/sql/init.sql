@@ -22,8 +22,8 @@ CREATE TABLE IF NOT EXISTS pedidos_venda (
     id_carro INT NOT NULL,
     data_pedido DATE NOT NULL,
     valor_pedido DECIMAL(10,2) NOT NULL,
-    FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente),
-    FOREIGN KEY (id_carro) REFERENCES carro(id_carro)
+    FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente),
+    FOREIGN KEY (id_carro) REFERENCES carros(id_carro)
 );
 
 -- Inserts para a tabela 'cliente'

@@ -139,6 +139,45 @@ class CarroController extends Carro {
             return res.status(500).json({ mensagem: "Não foi possível inserir o novo carro." });
         }
     }
+
+    static async atualizar(req: Request, res: Response): Promise<Response> {
+        try {
+            // Extrai o parâmetro idCarro da URL e converte para número
+            // Exemplo: se a rota for /carros/5, o valor 5 será convertido para número
+            const idCarro: number = parseInt(req.params.idCarro as string);
+            const carro: CarroDTO = req.body; // recupera informações do corpo da requisição e coloca no objeto DTO
+            carro.idCarro = idCarro; // insere o ID no objeto DTO
+
+            // Verifica se o ID é inválido (NaN ou zero)
+            // Se for, retorna uma resposta HTTP com status 400 (Bad Request) e uma mensagem de erro
+            if (isNaN(carro.idCarro) || carro.idCarro <= 0) {
+                return res.status(400).json({ mensagem: "ID incorreto" });
+            }
+
+            // Chama o método atualizar da classe Carro, passando o carro como argumento
+            // Se não encontrar o carro, retorna false
+            const respostaModelo: boolean = await Carro.atualizarCarro(carro);
+
+            // Verifica se nenhum carro foi encontrado com o ID fornecido
+            // Se for o caso, retorna uma resposta HTTP com status 200 (OK) e uma mensagem informando isso
+            if (carro === null) {
+                return res.status(200).json({ mensagem: "Nenhum carro encontrado com o ID fornecido" });
+            }
+
+            // Verifica se a reposta é true
+            if (respostaModelo) {
+                // Se sim retorna mensagem com status 200 (OK)
+                return res.status(200).json({ mensagem: `Carro ${carro.idCarro} atualizado com sucesso` });
+            } else {
+                // Em caso de erro retorna mensagem com status 400 (Erro no cliente)
+                return res.status(400).json({ mensagem: "Não foi possível atualizar carro, verifique se as informações foram passadas corretamente." });
+            }
+
+        } catch (error) {
+            console.error(`Erro no modelo. ${error}`);
+            return res.status(500).json({ mensagem: "Não foi possível remover o carro." })
+        }
+    }
 }
 
 export default CarroController;

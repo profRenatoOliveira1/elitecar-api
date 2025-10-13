@@ -242,6 +242,58 @@ class Carro {
             return false;
         }
     }
+
+    /**
+     * Atualiza um carro no banco de dados
+     * 
+     * @param carro Objeto com as informações a serem atualizadas
+     * @returns **true** em caso de sucesso, **false** em caso de falha
+     */
+    static async atualizarCarro(carro: CarroDTO): Promise<boolean> {
+        try {
+            // Define a query SQL para atualizar os dados de um carro na tabela 'carro'
+            // Os campos marca, modelo, ano e cor serão atualizados com base no ID do carro
+            const queryAtualizaCarro = `UPDATE carros SET marca = $1, modelo = $2, ano = $3, cor = $4 WHERE id_carro = $5`;
+
+            // Executa a query no banco de dados, passando os valores atualizados como parâmetros
+            // Usa toUpperCase() para padronizar os textos em letras maiúsculas
+            // Usa parseInt() para garantir que o ano seja tratado como número
+            const respostaBD = await database.query(queryAtualizaCarro, [
+                carro.marca.toUpperCase(),     // Nova marca do carro
+                carro.modelo.toUpperCase(),    // Novo modelo do carro
+                parseInt(carro.ano),           // Novo ano do carro
+                carro.cor.toUpperCase(),       // Nova cor do carro
+                carro.idCarro                  // ID do carro que será atualizado
+            ]);
+
+            console.log(queryAtualizaCarro, [
+                carro.marca.toUpperCase(),     // Nova marca do carro
+                carro.modelo.toUpperCase(),    // Novo modelo do carro
+                parseInt(carro.ano),           // Novo ano do carro
+                carro.cor.toUpperCase(),       // Nova cor do carro
+                carro.idCarro                  // ID do carro que será atualizado
+            ])
+
+            // Verifica se alguma linha foi afetada pela atualização
+            // Se rowCount for diferente de zero, significa que o carro foi atualizado com sucesso
+            if (respostaBD.rowCount != 0) {
+                // Exibe uma mensagem no console informando que o carro foi atualizado
+                console.info(`Carro atualizado com sucesso. ID: ${carro.idCarro}`);
+
+                // Retorna true indicando que a operação foi bem-sucedida
+                return true;
+            }
+
+            // Se nenhuma linha foi atualizada, retorna false indicando falha na operação
+            return false;
+        } catch (error) {
+            // Em caso de erro na execução da query, exibe uma mensagem de erro no console
+            console.error(`Erro na consulta ao banco de dados. ${error}`);
+
+            // Retorna false indicando que houve uma falha na operação
+            return false;
+        }
+    }
 }
 
 export default Carro
