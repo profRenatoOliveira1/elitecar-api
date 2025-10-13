@@ -140,6 +140,14 @@ class CarroController extends Carro {
         }
     }
 
+    /**
+     * Faz a chamada ao modelo para atualizar um carro
+     * @param req Requisição do cliente
+     * @param res Resposta do servidor
+     * @returns (200) Objeto do carro atualizado
+     * @returns (400) Erro ao atualizar carro
+     * @returns (500) Erro na consulta 
+     */
     static async atualizar(req: Request, res: Response): Promise<Response> {
         try {
             // Extrai o parâmetro idCarro da URL e converte para número
@@ -172,8 +180,8 @@ class CarroController extends Carro {
                 // Em caso de erro retorna mensagem com status 400 (Erro no cliente)
                 return res.status(400).json({ mensagem: "Não foi possível atualizar carro, verifique se as informações foram passadas corretamente." });
             }
-
         } catch (error) {
+            // Em caso de erro durante a consulta, retorna a mensagem para o cliente com status (500)
             console.error(`Erro no modelo. ${error}`);
             return res.status(500).json({ mensagem: "Não foi possível remover o carro." })
         }

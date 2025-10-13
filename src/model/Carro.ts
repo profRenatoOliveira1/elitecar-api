@@ -266,14 +266,6 @@ class Carro {
                 carro.idCarro                  // ID do carro que será atualizado
             ]);
 
-            console.log(queryAtualizaCarro, [
-                carro.marca.toUpperCase(),     // Nova marca do carro
-                carro.modelo.toUpperCase(),    // Novo modelo do carro
-                parseInt(carro.ano),           // Novo ano do carro
-                carro.cor.toUpperCase(),       // Nova cor do carro
-                carro.idCarro                  // ID do carro que será atualizado
-            ])
-
             // Verifica se alguma linha foi afetada pela atualização
             // Se rowCount for diferente de zero, significa que o carro foi atualizado com sucesso
             if (respostaBD.rowCount != 0) {
