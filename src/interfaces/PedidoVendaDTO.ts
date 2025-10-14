@@ -11,7 +11,8 @@ export interface PedidoVendaDTO {
     idCarro: number;        // ID do Carro
     dataPedido: Date;       // Data do Pedido
     valorPedido: number;    // Valor do Pedido
-    nomeCliente?: string    // Nome do cliente
-    marcaCarro?: string     // Marca do carro
-    modeloCarro?: string    // Modelo do carro
+    nomeCliente?: string;   // Nome do cliente
+    marcaCarro?: string;    // Marca do carro
+    modeloCarro?: string;   // Modelo do carro
+    situacao?: boolean;     // Situação do objeto
 }

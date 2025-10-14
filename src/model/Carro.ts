@@ -317,7 +317,7 @@ class Carro {
             // Define a query SQL para "remover" um carro da tabela 'carros'
             // Em vez de apagar o registro, ela apenas altera o campo 'situacao' para false
             // Isso é chamado de remoção lógica, pois os dados continuam no banco, mas são marcados como inativos
-            const queryRemoveCarro = `UPDATE carros SET situacao=false WHERE id_carro=$1`;
+            const queryRemoveCarro = `UPDATE carros SET situacao=false WHERE id_carro=$;`;
 
             // Executa a query no banco de dados, passando o ID do carro como parâmetro
             // O parâmetro $1 será substituído pelo valor de idCarro

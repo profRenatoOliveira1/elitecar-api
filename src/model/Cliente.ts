@@ -15,6 +15,7 @@ class Cliente {
     private nome: string;
     private cpf: string;
     private telefone: string;
+    private situacao: boolean = true;
 
     /**
      * Construtor da classe Cliente
@@ -92,13 +93,20 @@ class Cliente {
         this.telefone = telefone;
     }
 
-    public toDTO(): ClienteDTO {
-        return {
-            idCliente: this.idCliente,
-            nome: this.nome,
-            cpf: this.cpf,
-            telefone: this.telefone
-        }
+    /**
+     * Retorna a situacão do carro
+     * @returns **true** para ativdo, **false** para inativo
+     */
+    public getSituacao(): boolean {
+        return this.situacao;
+    }
+
+    /**
+     * Atribui a situação ao carro
+     * @param _situacao **true** para ativo, **false** para inativo
+     */
+    public setSituacao(_situacao: boolean): void {
+        this.situacao = _situacao;
     }
 
     /**
@@ -112,7 +120,7 @@ class Cliente {
             let listaDeClientes: Array<Cliente> = [];
 
             // Define a consulta SQL que irá buscar todos os registros da tabela 'clientes'
-            const querySelectClientes = `SELECT * FROM clientes;`;
+            const querySelectClientes = `SELECT * FROM clientes WHERE situacao=TRUE;`;
 
             // Executa a consulta no banco de dados e aguarda a resposta
             const respostaBD = await database.query(querySelectClientes);
@@ -227,6 +235,86 @@ class Cliente {
         } catch (error) {
             // Em caso de erro na execução da query, exibe uma mensagem de erro no console
             console.error(`Erro na consulta ao banco de dados. ${error}`);
+
+            // Retorna false indicando que houve uma falha na operação
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza um cliente no banco de dados
+     * 
+     * @param cliente Objeto com as informações a serem atualizadas 
+     * @returns **true** em caso de sucesso, **false** em caso de falha
+     */
+    static async atualizarCliente(cliente: ClienteDTO): Promise<boolean> {
+        try {
+            // Define a query SQL para atualizar os dados de um cliente na tabela 'clientes'
+            // Os campos nome, cpf e telefone serão atualizados com base no ID do cliente
+            const queryAtualizaCliente = `UPDATE clientes SET nome=$1, cpf=$2, telefone=$3 WHERE id_cliente=$4;`;
+
+            // Executa a query no banco de dados, passando os valores atualizados como parâmetros
+            // Os parâmetros são enviados como um array na mesma ordem definida na query
+            const respostaBD = await database.query(queryAtualizaCliente, [
+                cliente.nome.toUpperCase(),   // Nome do cliente convertido para letras maiúsculas
+                cliente.cpf,                  // CPF do cliente (mantido como está)
+                cliente.telefone,             // Telefone do cliente (mantido como está)
+                cliente.idCliente             // ID do cliente que será atualizado
+            ]);
+
+            // Verifica se alguma linha foi afetada pela atualização
+            // Se rowCount for diferente de zero, significa que o cliente foi atualizado com sucesso
+            if (respostaBD.rowCount != 0) {
+                // Exibe uma mensagem no console informando que o cliente foi atualizado
+                console.info(`Cliente atualizado com sucesso. ID: ${cliente.idCliente}`);
+
+                // Retorna true indicando que a operação foi bem-sucedida
+                return true;
+            }
+
+            // Se nenhuma linha foi atualizada, retorna false indicando falha na operação
+            return false;
+        } catch (error) {
+            // Em caso de erro na execução da query, exibe uma mensagem de erro no console
+            console.error(`Erro na consulta ao banco de dados. ${error}`);
+
+            // Retorna false indicando que houve uma falha na operação
+            return false;
+        }
+    }
+
+    /**
+     * Remove um cliente do banco de dados
+     * 
+     * @param idCliente ID do cliente a ser removido
+     * @returns **true** em caso de sucesso, **false** em caso de falha
+     */
+    static async removerCliente(idCliente: number): Promise<boolean> {
+        try {
+            // Define a query SQL para "remover" um cliente da tabela 'clientes'
+            // Em vez de excluir o registro, o campo 'situacao' é atualizado para false
+            // Isso é chamado de remoção lógica, pois o cliente continua no banco, mas é marcado como inativo
+            const queryRemoveCliente = `UPDATE clientes SET situacao=false WHERE id_cliente=$1;`;
+
+            // Executa a query no banco de dados, passando o ID do cliente como parâmetro
+            // O valor de idCliente será usado no lugar de $1 na query
+            const respostaBD = await database.query(queryRemoveCliente, [idCliente]);
+
+            // Verifica se alguma linha foi afetada pela atualização
+            // Se rowCount for diferente de zero, significa que o cliente foi marcado como removido com sucesso
+            if (respostaBD.rowCount != 0) {
+                // Exibe uma mensagem no console informando que o cliente foi removido
+                console.info(`Cliente removido com sucesso.`);
+
+                // Retorna true indicando que a operação foi realizada com sucesso
+                return true;
+            }
+
+            // Se nenhuma linha foi atualizada, retorna false indicando que o cliente não foi encontrado ou não foi removido
+            return false;
+        } catch (error) {
+            // Em caso de erro na execução da query, exibe uma mensagem de erro no console
+            console.error(`Erro na consulta com o banco de dados. ${error}`);
 
             // Retorna false indicando que houve uma falha na operação
             return false;

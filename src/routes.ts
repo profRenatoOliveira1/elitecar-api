@@ -32,7 +32,11 @@ router.put("/api/remover/carros/:idCarro", CarroController.remover);
 router.get("/api/clientes", ClienteController.todos);
 // Retorna um cliente com o ID específico
 router.get("/api/clientes/:idCliente", ClienteController.cliente);
-// Insere um novo carro no banco
+// Insere um novo cliente no banco
 router.post("/api/clientes", ClienteController.novo);
+// Atualiza um cliente no banco
+router.put("/api/clientes/:idCliente", ClienteController.atualizar);
+// Remover um cliente do banco
+router.put("/api/remover/clientes/:idCliente", ClienteController.remover);
 
 export { router }; // Exporta do roteador

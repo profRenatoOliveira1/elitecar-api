@@ -6,6 +6,7 @@ class PedidoVenda {
     private idCarro: number;
     private dataPedido: Date;
     private valorPedido: number;
+    private situacao: boolean = true;
 
     /**
      * Construtor da classe PedidoVenda
@@ -99,6 +100,22 @@ class PedidoVenda {
      */
     public setValorPedido(valorPedido: number): void {
         this.valorPedido = valorPedido;
+    }
+
+    /**
+     * Retorna a situacão do carro
+     * @returns **true** para ativdo, **false** para inativo
+     */
+    public getSituacao(): boolean {
+        return this.situacao;
+    }
+
+    /**
+     * Atribui a situação ao carro
+     * @param _situacao **true** para ativo, **false** para inativo
+     */
+    public setSituacao(_situacao: boolean): void {
+        this.situacao = _situacao;
     }
 }
 

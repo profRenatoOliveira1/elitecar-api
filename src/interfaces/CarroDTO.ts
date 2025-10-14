@@ -11,5 +11,5 @@ export interface CarroDTO {
     modelo: string,     // Modelo do carro
     ano: string,        // Ano do carro
     cor: string,        // Cor do carro
-    situacao: boolean   // Situação do objeto
+    situacao?: boolean   // Situação do objeto
 }
