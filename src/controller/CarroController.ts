@@ -183,7 +183,50 @@ class CarroController extends Carro {
         } catch (error) {
             // Em caso de erro durante a consulta, retorna a mensagem para o cliente com status (500)
             console.error(`Erro no modelo. ${error}`);
-            return res.status(500).json({ mensagem: "Não foi possível remover o carro." })
+            return res.status(500).json({ mensagem: "Não foi possível atualizar o carro." })
+        }
+    }
+
+    /**
+     * Faz a chamada ao modelo para remover um carro
+     * @param req Requisição do cliente
+     * @param res Resposta do servidor
+     * @returns (200) Objeto do carro removido
+     * @returns (400) Erro ao remover carro
+     * @returns (500) Erro na consulta 
+     */
+    static async remover(req: Request, res: Response): Promise<Response> {
+        try {
+            // Extrai o parâmetro idCarro da URL e converte para número
+            // Exemplo: se a rota for /carros/5, o valor "5" será convertido para o número 5
+            const idCarro: number = parseInt(req.params.idCarro as string);
+
+            // Verifica se o ID é inválido (não é um número ou é menor ou igual a zero)
+            // Se for inválido, retorna uma resposta HTTP com status 400 (Bad Request) e uma mensagem de erro
+            if (isNaN(idCarro) || idCarro <= 0) {
+                return res.status(400).json({ mensagem: "ID incorreto" });
+            }
+
+            // Chama o método removerCarro da classe Carro, passando o ID como argumento
+            // Esse método deve realizar a remoção lógica do carro no banco de dados
+            const respostaModelo = await Carro.removerCarro(idCarro);
+
+            // Verifica se a remoção foi bem-sucedida
+            if (respostaModelo) {
+                // Se sim, retorna uma resposta HTTP com status 200 (OK) e uma mensagem de sucesso
+                return res.status(200).json({ mensagem: "Carro removido com sucesso!" });
+            } else {
+                // Se não, retorna uma resposta HTTP com status 400 (Bad Request)
+                // Envia uma mensagem informando que a remoção falhou e sugere verificar os dados
+                return res.status(400).json({ mensagem: "Não foi possível remover o carro, verifique se as informações foram passadas corretamente." });
+            }
+        } catch (error) {
+            // Em caso de erro inesperado (como falha de conexão ou erro interno), exibe a mensagem no console
+            console.error(`Erro no modelo. ${error}`);
+
+            // Retorna uma resposta HTTP com status 500 (Internal Server Error)
+            // Envia uma mensagem informando que não foi possível concluir a remoção
+            return res.status(500).json({ mensagem: "Não foi possível remover o carro." });
         }
     }
 }

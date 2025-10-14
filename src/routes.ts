@@ -22,6 +22,8 @@ router.get("/api/carros/:idCarro", CarroController.carro);
 router.post("/api/carros", CarroController.novo);
 // Atualiza um carro no banco
 router.put("/api/carros/:idCarro", CarroController.atualizar)
+// Remove um carro no banco
+router.put("/api/remover/carros/:idCarro", CarroController.remover);
 
 /**
  * Endpoints (rotas) para Clientes

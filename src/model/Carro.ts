@@ -11,11 +11,12 @@ const database = new DatabaseModel().pool; //Inicializa o pool de conexões com 
 class Carro {
 
     /* Atributos */
-    private idCarro: number = 0;
-    private marca: string;
-    private modelo: string;
-    private ano: number;
-    private cor: string;
+    private idCarro: number = 0;        // Identificador único do objeto
+    private marca: string;              // Marca do carro
+    private modelo: string;             // Modelo do carro
+    private ano: number;                // Ano de fabricacão do carro
+    private cor: string;                // Cor da pintura do carro
+    private situacao: boolean = true;   // Situação do carro (true = ativo, false = inativo)
 
     /**
      * Construtor da classe Carro
@@ -112,6 +113,22 @@ class Carro {
     }
 
     /**
+     * Retorna a situacão do carro
+     * @returns **true** para ativdo, **false** para inativo
+     */
+    public getSituacao(): boolean {
+        return this.situacao;
+    }
+
+    /**
+     * Atribui a situação ao carro
+     * @param _situacao **true** para ativo, **false** para inativo
+     */
+    public setSituacao(_situacao: boolean): void {
+        this.situacao = _situacao;
+    }
+
+    /**
      * Retorna os carros cadastrados no banco de dados
      * @returns Lista com carros cadastrados
      * @returns valor nulo em caso de erro na consulta
@@ -122,7 +139,7 @@ class Carro {
             let listaDeCarros: Array<Carro> = [];
 
             // Define a query SQL que será executada no banco de dados para buscar todos os registros da tabela 'carro'
-            const querySelectCarros = `SELECT * FROM carros;`;
+            const querySelectCarros = `SELECT * FROM carros WHERE situacao=TRUE;`;
 
             // Executa a query no banco de dados e aguarda a resposta
             const respostaBD = await database.query(querySelectCarros);
@@ -138,6 +155,7 @@ class Carro {
                 )
 
                 novoCarro.setIdCarro(carroBD.id_carro);
+                novoCarro.setSituacao(carroBD.situacao);
 
                 // Adiciona o novo objeto CarroDTO à lista de carros
                 listaDeCarros.push(novoCarro);
@@ -181,6 +199,7 @@ class Carro {
                 )
 
                 novoCarro.setIdCarro(carroBD.id_carro);
+                novoCarro.setSituacao(carroBD.situacao);
 
                 // Atribui o novo objeto à variável carro
                 carro = novoCarro;
@@ -281,6 +300,44 @@ class Carro {
         } catch (error) {
             // Em caso de erro na execução da query, exibe uma mensagem de erro no console
             console.error(`Erro na consulta ao banco de dados. ${error}`);
+
+            // Retorna false indicando que houve uma falha na operação
+            return false;
+        }
+    }
+
+    /**
+     * Remove um carro do banco de dados
+     * 
+     * @param idCarro ID do carro a ser removido
+     * @returns **true** em caso de sucesso, **false** em caso de falha
+     */
+    static async removerCarro(idCarro: number): Promise<boolean> {
+        try {
+            // Define a query SQL para "remover" um carro da tabela 'carros'
+            // Em vez de apagar o registro, ela apenas altera o campo 'situacao' para false
+            // Isso é chamado de remoção lógica, pois os dados continuam no banco, mas são marcados como inativos
+            const queryRemoveCarro = `UPDATE carros SET situacao=false WHERE id_carro=$1`;
+
+            // Executa a query no banco de dados, passando o ID do carro como parâmetro
+            // O parâmetro $1 será substituído pelo valor de idCarro
+            const respostaBD = await database.query(queryRemoveCarro, [idCarro]);
+
+            // Verifica se alguma linha foi afetada pela atualização
+            // Se rowCount for diferente de zero, significa que o carro foi marcado como removido com sucesso
+            if (respostaBD.rowCount != 0) {
+                // Exibe uma mensagem no console informando que o carro foi removido
+                console.info(`Carro removido com sucesso.`);
+
+                // Retorna true indicando que a operação foi bem-sucedida
+                return true;
+            }
+
+            // Se nenhuma linha foi atualizada, retorna false indicando que o carro não foi encontrado ou não foi removido
+            return false;
+        } catch (error) {
+            // Em caso de erro na execução da query, exibe uma mensagem de erro no console
+            console.error(`Erro na consulta com o banco de dados. ${error}`);
 
             // Retorna false indicando que houve uma falha na operação
             return false;
