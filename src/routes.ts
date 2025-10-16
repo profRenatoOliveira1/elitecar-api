@@ -2,6 +2,7 @@ import type { Request, Response } from "express"; // Importa módulo Request e R
 import { Router } from "express"; // Importa o módulo Router do pacote Express
 import CarroController from "./controller/CarroController.js";
 import ClienteController from "./controller/ClienteController.js";
+import PedidoVendaController from "./controller/PedidoVendaController.js";
 
 const router = Router(); // Cria um novo roteador
 
@@ -38,5 +39,13 @@ router.post("/api/clientes", ClienteController.novo);
 router.put("/api/clientes/:idCliente", ClienteController.atualizar);
 // Remover um cliente do banco
 router.put("/api/remover/clientes/:idCliente", ClienteController.remover);
+
+/**
+ * Endpoints (rotas) para PedidosVenda
+ */
+// Retorna a lista com todos os pedidos de venda
+router.get("/api/pedidos", PedidoVendaController.todos);
+// Retorna um pedido com o ID específico
+router.get("/api/pedidos/:idPedido", PedidoVendaController.pedido);
 
 export { router }; // Exporta do roteador
