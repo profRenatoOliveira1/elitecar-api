@@ -1,0 +1,370 @@
+{
+	"info": {
+		"_postman_id": "23150f03-ff8f-44e7-87c9-493b4ebc09f3",
+		"name": "ELITECAR",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "50769",
+		"_collection_link": "https://senai3.postman.co/workspace/SENAI-Workspace~4dd192e6-30c0-456a-8596-3d158af21274/collection/50769-23150f03-ff8f-44e7-87c9-493b4ebc09f3?action=share&source=collection_link&creator=50769"
+	},
+	"item": [
+		{
+			"name": "Carro",
+			"item": [
+				{
+					"name": "LISTAR CARROS",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/api/carros",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"carros"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LISTAR CARRO - ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/api/carros/500",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"carros",
+								"500"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CADASTRO CARRO",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"marca\": \"Chevrolet\",\r\n    \"modelo\": \"Camaro\",\r\n    \"ano\": 2025,\r\n    \"cor\": \"Prata\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/carros",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"carros"
+							]
+						},
+						"description": "### Add New Car\n\nThis endpoint is used to add a new car to the system.\n\n#### Request Body\n\n- `marca` (string): The brand of the car.\n    \n- `modelo` (string): The model of the car.\n    \n- `ano` (number): The year of the car.\n    \n- `cor` (string): The color of the car.\n    \n\n#### Response\n\nThe response will contain the status of the request to add a new car."
+					},
+					"response": []
+				},
+				{
+					"name": "DELETAR CARRO",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/api/remover/carros/5",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"remover",
+								"carros",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ATUALIZAR CARRO",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"marca\": \"Chevrolet\",\r\n    \"modelo\": \"Camaro\",\r\n    \"ano\": 2024,\r\n    \"cor\": \"Amarelo\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/carros/6",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"carros",
+								"6"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CLIENTE",
+			"item": [
+				{
+					"name": "LISTAR CLIENTES",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/api/clientes",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"clientes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LISTAR CLIENTES - ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/api/clientes/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"clientes",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CADASTRO CLIENTE",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nome\": \"Débora Olivia Drumond\",\r\n    \"cpf\": \"15769958120\",\r\n    \"telefone\": \"81977445522\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/clientes",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"clientes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETAR CLIENTE",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/api/remover/clientes/6",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"remover",
+								"clientes",
+								"6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ATUALIZAR CLIENTE",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nome\": \"LUANA AMARAL\",\r\n    \"cpf\": \"99988875310\",\r\n    \"telefone\": \"16987654321\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/clientes/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"clientes",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "PEDIDO VENDA",
+			"item": [
+				{
+					"name": "LISTAR PEDIDOS",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/api/pedidos",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"pedidos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LISTAR PEDIDO - ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/api/pedidos/6",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"pedidos",
+								"6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CADASTRO PEDIDO",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"idCliente\": 3,\r\n    \"idCarro\": 2,\r\n    \"dataPedido\": \"2025-10-25\",\r\n    \"valorPedido\": 123000.20\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/pedidos",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"pedidos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE PEDIDO",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/api/remover/pedidos/6",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"remover",
+								"pedidos",
+								"6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ATUALIZAR PEDIDO",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"idCarro\": 4,\r\n    \"idCliente\": 3,\r\n    \"dataPedido\": \"2025-10-17\",\r\n    \"valorPedido\": 79123.99\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/pedidos/6",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"pedidos",
+								"6"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "",
+			"type": "default"
+		}
+	]
+}
