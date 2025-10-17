@@ -251,6 +251,137 @@ class PedidoVenda {
             return null;
         }
     }
+
+    /**
+     * Insere um pedido de vendas no banco de dados
+     * 
+     * @param pedido objeto a ser inserido no banco 
+     * @returns **true** caso a inserção tenha sido feita, **false** em caso de erro
+     */
+    static async cadastrarPedido(pedido: PedidoVendaDTO): Promise<boolean> {
+        try {
+            // Define a query SQL para inserir um novo pedido na tabela 'pedidos_venda'
+            // Os valores serão passados como parâmetros ($1, $2, $3, $4)
+            // O comando RETURNING retorna o id_pedido gerado automaticamente pelo banco
+            const queryInsertPedido = `INSERT INTO pedidos_venda (id_cliente, id_carro, data_pedido, valor_pedido)
+                                VALUES
+                                ($1, $2, $3, $4)
+                                RETURNING id_pedido;`;
+
+            // Executa a query no banco de dados, passando os dados do pedido como parâmetros
+            // Os valores são extraídos do objeto 'pedido' recebido pela aplicação
+            const respostaBD = await database.query(queryInsertPedido, [
+                pedido.idCarro,                        // ID do carro relacionado ao pedido
+                pedido.idCliente,                     // ID do cliente que está fazendo o pedido
+                new Date(pedido.dataPedido),          // Data do pedido convertida para objeto Date
+                pedido.valorPedido                    // Valor total do pedido
+            ]);
+
+            // Verifica se a resposta do banco contém pelo menos uma linha
+            // Isso indica que o pedido foi inserido com sucesso
+            if (respostaBD.rows.length > 0) {
+                // Exibe no console uma mensagem de sucesso com o ID do pedido gerado
+                console.info(`Pedido de venda cadastrado com sucesso. ID: ${respostaBD.rows[0].id_pedido}`);
+
+                // Retorna true indicando que o cadastro foi realizado com sucesso
+                return true;
+            }
+
+            // Se nenhuma linha foi retornada, significa que o cadastro falhou
+            // Retorna false indicando falha na operação
+            return false;
+        } catch (error) {
+            // Em caso de erro na execução da query, exibe uma mensagem de erro no console
+            console.error(`Erro na consulta ao banco de dados. ${error}`);
+
+            // Retorna false indicando que houve uma falha na operação
+            return false;
+        }
+    }
+
+    /**
+     * Atualiza um pedido no banco de dados
+     * 
+     * @param pedido Objeto com as informações a serem atualizadas
+     * @returns **true** em caso de sucesso, **false** em caso de falha
+     */
+    static async atualizarPedido(pedido: PedidoVendaDTO): Promise<boolean> {
+        try {
+            // Define a query SQL para atualizar os dados de um pedido na tabela 'pedidos_venda'
+            // Os campos atualizados são: id_carro, id_cliente, data_pedido e valor_pedido
+            // A atualização é feita com base no id_pedido
+            const queryUpdatePedido = `UPDATE pedidos_venda SET id_carro=$1, id_cliente=$2, data_pedido=$3, valor_pedido$4 WHERE id_pedido=$5;`;
+
+            // Executa a query no banco de dados, passando os valores atualizados como parâmetros
+            // Os valores são extraídos do objeto 'pedido' recebido pela aplicação
+            const respostaBD = await database.query(queryUpdatePedido, [
+                pedido.idCarro,                      // Novo ID do carro
+                pedido.idCliente,                   // Novo ID do cliente
+                new Date(pedido.dataPedido),        // Nova data do pedido convertida para objeto Date
+                pedido.valorPedido,                 // Novo valor do pedido
+                pedido.idPedido                     // ID do pedido que será atualizado
+            ]);
+
+            // Verifica se alguma linha foi afetada pela atualização
+            // Se rowCount for diferente de zero, significa que o pedido foi atualizado com sucesso
+            if (respostaBD.rowCount != 0) {
+                // Exibe uma mensagem no console informando que o pedido foi atualizado
+                console.info(`Pedido de venda atualizado com sucesso. ID: ${pedido.idPedido}`);
+
+                // Retorna true indicando que a operação foi bem-sucedida
+                return true;
+            }
+
+            // Se nenhuma linha foi atualizada, retorna false indicando falha na operação
+            return false;
+        } catch (error) {
+            // Em caso de erro na execução da query, exibe uma mensagem de erro no console
+            console.error(`Erro na consulta ao banco de dados. ${error}`);
+
+            // Retorna false indicando que houve uma falha na operação
+            return false;
+        }
+    }
+
+    /**
+     * Remove um pedido do banco de dados
+     * 
+     * @param idPedido ID do pedido a ser removido
+     * @returns **true** em caso de sucesso, **false** em caso de falha
+     */
+    static async removerPedido(idPedido: number): Promise<boolean> {
+        try {
+            // Define a query SQL para "remover" um pedido de venda da tabela 'pedidos_venda'
+            // Em vez de excluir o registro, o campo 'situacao' é atualizado para false
+            // Isso é chamado de remoção lógica, pois o pedido continua no banco, mas é marcado como inativo
+            const queryRemoveCarro = `UPDATE pedidos_venda SET situacao=false WHERE id_pedido=$1;`;
+
+            // Executa a query no banco de dados, passando o ID do pedido como parâmetro
+            // O valor de idPedido será usado no lugar de $1 na query
+            const repostaBD = await database.query(queryRemoveCarro, [
+                idPedido    // ID do pedido a ser removido
+            ]);
+
+            // Verifica se alguma linha foi afetada pela atualização
+            // Se rowCount for diferente de zero, significa que o pedido foi marcado como removido com sucesso
+            if (repostaBD.rowCount != 0) {
+                // Exibe uma mensagem no console informando que o pedido foi removido
+                console.info(`Pedido removido com sucesso.`);
+
+                // Retorna true indicando que a operação foi realizada com sucesso
+                return true;
+            }
+
+            // Se nenhuma linha foi atualizada, retorna false indicando que o pedido não foi encontrado ou não foi removido
+            return false;
+        } catch (error) {
+            // Em caso de erro na execução da query, exibe uma mensagem de erro no console
+            console.error(`Erro na consulta com o banco de dados. ${error}`);
+
+            // Retorna false indicando que houve uma falha na operação
+            return false;
+        }
+    }
 }
 
 export default PedidoVenda;

@@ -47,5 +47,11 @@ router.put("/api/remover/clientes/:idCliente", ClienteController.remover);
 router.get("/api/pedidos", PedidoVendaController.todos);
 // Retorna um pedido com o ID específico
 router.get("/api/pedidos/:idPedido", PedidoVendaController.pedido);
+// Insere um novo pedido no banco
+router.post("/api/pedidos", PedidoVendaController.novo);
+// Atualiza um pedido no banco
+router.put("/api/pedidos/:idPedido", PedidoVendaController.atualizar);
+// Remover um pedido do banco
+router.put("/api/remover/pedidos/:idPedido", PedidoVendaController.remover);
 
 export { router }; // Exporta do roteador
