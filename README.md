@@ -41,7 +41,7 @@ O sistema deverá ser **seguro, escalável e padronizado**, servindo de base par
 ---
 
 ## Diagrama de Classes
-<img src="./infra/docs/Diagrama de Classes - EliteCar.png" />
+<img src="./infra/docs/EliteCar-ClassDiagram.drawio.png" />
 
 ---
 
