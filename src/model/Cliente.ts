@@ -1,3 +1,12 @@
+import { DatabaseModel } from "./DatabaseModel.js"; // Importa a classe DatabaseModel
+
+const database = new DatabaseModel().pool; // Inicializa o pool de conexões com o banco de dados
+
+/*
+* Classe Cliente representa um modelo de cliente com seus atributos principais (nome, cpf, telefone e ID).
+* Permite criar objetos de cliente, acessar e modificar seus dados, e consultar informações no banco de dados.
+* Inclui métodos estáticos para listar todos os clientes ou buscar um carro específico pelo ID.
+*/
 class Cliente {
 
     // Atributos
@@ -6,6 +15,12 @@ class Cliente {
     private cpf: string;
     private telefone: string;
 
+    /**
+     * Construtor da classe Cliente
+     * @param _nome Nome do cliente
+     * @param _cpf CPF do cliente
+     * @param _telefone Telefone do cliente
+     */
     constructor(
         _nome: string,
         _cpf: string,
@@ -80,7 +95,48 @@ class Cliente {
         this.telefone = telefone;
     }
 
-    
+    /**
+     * Retorna os clientes cadastrados no banco de dados
+     * @returns Lista com clientes cadastrados
+     * @returns valor nulo em caso de erro na consulta
+     */
+    static async listarClientes(): Promise<Array<Cliente> | null> {
+        try {
+            // Cria uma lista vazia que irá armazenar os objetos do tipo Cliente
+            let listaDeClientes: Array<Cliente> = [];
+
+            // Define a consulta SQL que irá buscar todos os registros da tabela 'clientes'
+            const querySelectClientes = `SELECT * FROM clientes;`;
+
+            // Executa a consulta no banco de dados e aguarda a resposta
+            const respostaBD = await database.query(querySelectClientes);
+
+            // Percorre cada linha retornada pela consulta
+            respostaBD.rows.forEach((clienteBD) => {
+                // Cria um novo objeto Cliente usando os dados da linha atual (nome, cpf, telefone)
+                const novoCliente: Cliente = new Cliente(
+                    clienteBD.nome,
+                    clienteBD.cpf,
+                    clienteBD.telefone
+                );
+
+                // Define o ID do cliente usando o valor retornado do banco
+                novoCliente.setIdCliente(clienteBD.id_cliente);
+
+                // Adiciona o novo cliente à lista de clientes
+                listaDeClientes.push(novoCliente);
+            });
+
+            // Retorna a lista completa de clientes
+            return listaDeClientes;
+        } catch (error) {
+            // Em caso de erro na execução da consulta, exibe uma mensagem no console
+            console.error(`Erro na consulta ao banco de dados. ${error}`);
+
+            // Retorna null para indicar que houve uma falha na operação
+            return null;
+        }
+    }
 }
 
 export default Cliente;
