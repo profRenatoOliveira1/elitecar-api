@@ -1,71 +1,64 @@
-import pg from 'pg'; // Importa o pacote pg para conexão com o banco de dados
-import dotenv from 'dotenv'; // Importa o pacote dotenv para carregar as variáveis de ambiente
+import pg from "pg";
+import dotenv from "dotenv";
+dotenv.config();
 
-dotenv.config(); // Carrega as variáveis de ambiente
-
-/**
- * Classe que representa o modelo de banco de dados.
- */
 export class DatabaseModel {
-    
-    /**
-     * Configuração para conexão com o banco de dados
-     */
-    private _config: object;
+  private _pool: pg.Pool;
 
-    /**
-     * Pool de conexões com o banco de dados
-     */
-    private _pool: pg.Pool;
-
-    /**
-     * Cliente de conexão com o banco de dados
-     */
-    private _client: pg.Client;
-
-    /**
-     * Construtor da classe DatabaseModel.
-     */
-    constructor() {
-        // Configuração padrão para conexão com o banco de dados
-        this._config = { // Objeto para configuração para conexão com o banco de dados
-            user: process.env.DB_USER, // Usuário do banco de dados, recuperado do arquivo .env
-            host: process.env.DB_HOST, // Host do banco de dados, recuperado do arquivo .env
-            database: process.env.DB_NAME, // Nome do banco de dados, recuperado do arquivo .env
-            password: process.env.DB_PASSWORD, // Senha do banco de dados, recuperado do arquivo .env
-            port: process.env.DB_PORT, // Porta do banco de dados, recuperado do arquivo .env
-            max: 10, // Número máximo de conexões
-            idleTimoutMillis: 10000 // Tempo máximo de inatividade da conexão
-        }
-
-        this._pool = new pg.Pool(this._config); // Inicializa o pool de conexões com a configuração
-
-        this._client = new pg.Client(this._config); // Inicializa o cliente de conexão com a configuração
+  constructor() {
+    if (!process.env.DATABASE_URL) {
+      // Local/dev por variáveis separadas
+      this._pool = new pg.Pool({
+        user: process.env.DB_USER,
+        host: process.env.DB_HOST,
+        database: process.env.DB_NAME,
+        password: process.env.DB_PASSWORD,
+        port: Number(process.env.DB_PORT) || 5432,
+        ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : undefined,
+        max: 10,
+        idleTimeoutMillis: 10_000,
+      });
+      return;
     }
 
-    /**
-     * Método para testar a conexão com o banco de dados.
-     *
-     * @returns **true** caso a conexão tenha sido feita, **false** caso negativo
-     */
-    public async testeConexao() {
-        try { // Tenta conectar ao banco de dados
-            await this._client.connect(); // Conecta ao banco de dados
-            console.log('Database connected!'); // Exibe uma mensagem de sucesso
-            this._client.end(); // Encerra a conexão
-            return true; // Retorna verdadeiro
-        } catch (error) { // Em caso de erro, exibe uma mensagem de erro
-            console.log('Error to connect database X( '); // Exibe uma mensagem de erro
-            console.log(error); // Exibe o erro
-            this._client.end(); // Encerra a conexão
-            return false; // Retorna falso
-        }
-    }
+    // PRODUÇÃO: desmonta a URL e passa os campos + SSL no-verify
+    const u = new URL(process.env.DATABASE_URL);
+    const user = decodeURIComponent(u.username);
+    const password = decodeURIComponent(u.password);
+    const host = u.hostname;
+    const port = Number(u.port || 5432);
+    const database = u.pathname.replace(/^\//, "");
 
-    /**
-     * Getter para o pool de conexões.
-     */
-    public get pool() {
-        return this._pool; // Retorna o pool de conexões
+    // logs mínimos (não expõem segredos)
+    console.log("[DB] Host:", host, "Port:", port, "Pooler?", host.includes("pooler.supabase.com"));
+
+    this._pool = new pg.Pool({
+      host,
+      port,
+      database,
+      user,
+      password,
+      // 👇 força ignorar a cadeia (continua TLS criptografado)
+      ssl: { rejectUnauthorized: false },
+      max: 10,
+      idleTimeoutMillis: 10_000,
+    });
+  }
+
+  public async testeConexao(): Promise<boolean> {
+    try {
+      const { rows } = await this._pool.query("select now()");
+      console.clear();
+      console.log("Database connected!", rows[0].now);
+      return true;
+    } catch (error) {
+      console.error("Error to connect database X(", error);
+      console.error("Não foi possível conectar ao banco de dados");
+      return false;
     }
+  }
+
+  public get pool() {
+    return this._pool;
+  }
 }
