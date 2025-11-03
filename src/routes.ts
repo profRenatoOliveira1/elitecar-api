@@ -24,7 +24,7 @@ router.post("/api/carros", CarroController.novo);
 // Atualiza um carro no banco
 router.put("/api/carros/:idCarro", CarroController.atualizar)
 // Remove um carro no banco
-router.put("/api/remover/carros/:idCarro", CarroController.remover);
+router.put("/api/carros/remover/:idCarro", CarroController.remover);
 
 /**
  * Endpoints (rotas) para Clientes
@@ -38,7 +38,7 @@ router.post("/api/clientes", ClienteController.novo);
 // Atualiza um cliente no banco
 router.put("/api/clientes/:idCliente", ClienteController.atualizar);
 // Remover um cliente do banco
-router.put("/api/remover/clientes/:idCliente", ClienteController.remover);
+router.put("/api/clientes/remover/:idCliente", ClienteController.remover);
 
 /**
  * Endpoints (rotas) para PedidosVenda
@@ -52,6 +52,6 @@ router.post("/api/pedidos", PedidoVendaController.novo);
 // Atualiza um pedido no banco
 router.put("/api/pedidos/:idPedido", PedidoVendaController.atualizar);
 // Remover um pedido do banco
-router.put("/api/remover/pedidos/:idPedido", PedidoVendaController.remover);
+router.put("/api/pedidos/remover/:idPedido", PedidoVendaController.remover);
 
 export { router }; // Exporta do roteador
