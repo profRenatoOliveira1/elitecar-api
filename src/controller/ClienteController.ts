@@ -48,7 +48,7 @@ class ClienteController extends Cliente {
             // Esses dados devem estar no corpo da requisição e seguir o formato da interface CarroDTO
             const dadosRecebidosCliente = req.body;
 
-            // validação de dados ...
+            // validação de dados (vamos fazer no futuro)
 
             // Chama o método cadastrarCarro da classe Carro, passando os dados recebidos
             // Esse método deve inserir o carro no banco de dados e retornar true ou false
