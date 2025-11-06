@@ -16,6 +16,6 @@ router.get("/api/clientes", ClienteController.todos);
 // Cadastra um novo cliente
 router.post("/api/clientes", ClienteController.novo);
 // Retorna um cliente a partir do ID
-router.get("/api/clientes/:idCliente");
+router.get("/api/clientes/:idCliente", ClienteController.cliente);
 
 export { router }; // Exporta o roteador
