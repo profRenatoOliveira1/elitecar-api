@@ -184,6 +184,46 @@ class Cliente {
             return false;
         }
     }
+
+    /**
+     * Retorna informações de um cliente com base no ID
+     * @param idCliente id do cliente a ser buscado
+     * @returns Cliente selecionado
+     */
+    static async listarCliente(idCliente: number): Promise<Cliente | null> {
+        try {
+            // Define a consulta SQL que busca um cliente específico pelo ID.
+            const querySelectCliente = `SELECT * FROM clientes WHERE id_cliente=$1;`;
+
+            // Executa a consulta no banco de dados, passando o idCliente como parâmetro.
+            const respostaBD = await database.query(querySelectCliente, [idCliente]);
+
+            // Percorre os resultados retornados pela consulta (espera-se apenas um cliente).
+            if(respostaBD.rowCount != 0) {
+                // Cria um novo objeto Cliente com os dados retornados do banco (nome, cpf, telefone).
+                const cliente: Cliente = new Cliente(
+                    respostaBD.rows[0].nome,
+                    respostaBD.rows[0].cpf,
+                    respostaBD.rows[0].telefone
+                );
+
+                // Define o ID do cliente usando o valor retornado do banco.
+                cliente.setIdCliente(respostaBD.rows[0].id_cliente);
+
+                // Retorna o objeto cliente
+                return cliente;
+            }
+
+            // Retorna um valor nulo se o banco não devolveu resposta
+            return null;
+        } catch (error) {
+            // Em caso de erro na execução da consulta, exibe uma mensagem no console.
+            console.error(`Erro ao buscar cliente no banco de dados. ${error}`);
+
+            // Retorna null para indicar que houve uma falha na operação.
+            return null;
+        }
+    }
 }
 
 export default Cliente;

@@ -73,6 +73,49 @@ class ClienteController extends Cliente {
             return res.status(500).json({ mensagem: "Não foi possível inserir o cliente" });
         }
     }
+
+    /**
+     * Faz a chamada ao modelo para obter o cliente selecionado e devolve ao cliente
+     * 
+     * @param req Requisição do cliente
+     * @param res Resposta do servidor
+     * @returns (200) Objeto do cliente selecionado
+     * @returns (400) Erro no ID do cliente
+     * @returns (500) Erro na consulta
+     */
+    static async cliente(req: Request, res: Response): Promise<Response> {
+        try {
+            // Extrai o parâmetro idCliente da URL e converte para número
+            // Exemplo: se a rota for /clientes/3, o valor "3" será convertido para número
+            const idCliente: number = parseInt(req.params.idCliente as string);
+
+            // Verifica se o ID é inválido (não é número ou é menor ou igual a zero)
+            // Se for, retorna uma resposta HTTP com status 400 (Bad Request) e uma mensagem de erro
+            if (isNaN(idCliente) || idCliente <= 0) {
+                return res.status(400).json({ mensagem: "ID inválido." });
+            }
+
+            // Chama o método listarCliente da classe Cliente, passando o idCliente como argumento
+            // Se não encontrar o cliente, retorna null
+            const respostaModelo = await Cliente.listarCliente(idCliente);
+
+            // Verifica se nenhum cliente foi encontrado com o ID fornecido
+            // Se for o caso, retorna uma resposta HTTP com status 200 (OK) e uma mensagem informando isso
+            if (respostaModelo === null) {
+                return res.status(200).json({ mensagem: "Nenhum cliente encontrado com o ID fornecido." });
+            }
+
+            // Se o ID for válido e o cliente existir, retorna o objeto cliente com status 200 (OK)
+            return res.status(200).json(respostaModelo);
+        } catch (error) {
+            // Em caso de erro, exibe a mensagem no console para ajudar na depuração
+            console.error(`Erro ao acesso o modelo. ${error}`);
+
+            // Retorna uma resposta HTTP com status 500 (erro interno do servidor)
+            // Envia uma mensagem informando que não foi possível acessar os dados
+            return res.status(500).json({ mensagem: "Não foi possível recuperar o cliente." });
+        }
+    }
 }
 
 export default ClienteController;
