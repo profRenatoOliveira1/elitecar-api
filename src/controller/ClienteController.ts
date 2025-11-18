@@ -116,6 +116,51 @@ class ClienteController extends Cliente {
             return res.status(500).json({ mensagem: "Não foi possível recuperar o cliente." });
         }
     }
+
+    /**
+     * Faz a chamada ao modelo para remover o cliente selecionado e devolve ao cliente
+     * 
+     * @param req Requisição do cliente
+     * @param res Resposta do servidor
+     * @returns (200) Objeto do cliente removido com sucesso
+     * @returns (400) Erro no ID do cliente
+     * @returns (500) Erro na consulta
+     */
+    static async remover(req: Request, res: Response): Promise<Response> {
+        try {
+            // Converte o parâmetro recebido na URL (req.params.idCliente) para número inteiro
+            // O "as string" força o tipo para string antes da conversão
+            const idCliente: number = parseInt(req.params.idCliente as string);
+
+            // Verifica se o ID é inválido:
+            // - isNaN(idCliente): significa que não é um número
+            // - idCliente <= 0: significa que é zero ou negativo
+            // Se for inválido, retorna uma resposta HTTP 400 (Bad Request) com uma mensagem de erro em JSON
+            if (isNaN(idCliente) || idCliente <= 0) {
+                return res.status(400).json({ mensagem: "ID inválido." });
+            }
+
+            // Chama o método do modelo Cliente para remover o cliente com o ID informado
+            // Esse método retorna um booleano indicando se a remoção foi bem-sucedida
+            const respostaModelo: boolean = await Cliente.removerCliente(idCliente);
+
+            // Se a resposta do modelo for true, significa que o cliente foi removido
+            // Retorna uma resposta HTTP 200 (OK) com mensagem de sucesso
+            if (respostaModelo) {
+                return res.status(200).json({ mensagem: "Cliente removido com sucesso." });
+            } else {
+                // Caso contrário, retorna uma resposta HTTP 400 (Bad Request)
+                // indicando que não foi possível remover o cliente (por exemplo, ID inexistente)
+                return res.status(400).json({ mensagem: "Não foi possível remover o cliente." });
+            }
+        } catch (error) {
+            // Se ocorrer qualquer erro inesperado (ex.: falha no banco, erro de sintaxe, etc.)
+            // Registra o erro no console para depuração
+            console.error(`Erro ao acessar modelo. ${error}`);
+            // Retorna uma resposta HTTP 500 (Internal Server Error) com mensagem genérica
+            return res.status(500).json({ mensagem: "Não foi possível remover o cliente." });
+        }
+    }
 }
 
 export default ClienteController;

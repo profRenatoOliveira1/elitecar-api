@@ -17,5 +17,7 @@ router.get("/api/clientes", ClienteController.todos);
 router.post("/api/clientes", ClienteController.novo);
 // Retorna um cliente a partir do ID
 router.get("/api/clientes/:idCliente", ClienteController.cliente);
+// Remove um cliente a partir do ID
+router.delete("/api/clientes/remover/:idCliente", ClienteController.remover);
 
 export { router }; // Exporta o roteador

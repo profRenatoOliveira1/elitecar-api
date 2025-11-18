@@ -199,7 +199,7 @@ class Cliente {
             const respostaBD = await database.query(querySelectCliente, [idCliente]);
 
             // Percorre os resultados retornados pela consulta (espera-se apenas um cliente).
-            if(respostaBD.rowCount != 0) {
+            if (respostaBD.rowCount != 0) {
                 // Cria um novo objeto Cliente com os dados retornados do banco (nome, cpf, telefone).
                 const cliente: Cliente = new Cliente(
                     respostaBD.rows[0].nome,
@@ -222,6 +222,39 @@ class Cliente {
 
             // Retorna null para indicar que houve uma falha na operação.
             return null;
+        }
+    }
+
+    /**
+     * Altera a situacao do cliente no banco de dados
+     * 
+     * @param idCliente do cliente a ser removido
+     * @returns **true** caso a inserção tenha sido feita, **false** em caso de erro
+     */
+    static async removerCliente(idCliente: number): Promise<boolean> {
+        try {
+            // Define a query SQL que marca o cliente como inativo (soft delete), alterando 'situacao' para FALSE
+            const queryDeleteCliente = `UPDATE clientes SET situacao=FALSE WHERE id_cliente=$1;`;
+
+            // Executa a query de forma assíncrona no banco, substituindo $1 pelo valor de 'idCliente'
+            // 'database.query' retorna um objeto com informações da execução (como 'rowCount')
+            const respostaBD = await database.query(queryDeleteCliente, [idCliente]);
+
+            // Verifica se alguma linha foi afetada pela atualização (rowCount > 0 significa que o ID existia)
+            if (respostaBD.rowCount != 0) {
+                // Loga no console que a remoção (inativação) ocorreu com sucesso
+                console.info(`Cliente removido com sucesso.`);
+                // Retorna true para indicar sucesso
+                return true;
+            }
+
+            // Se nenhuma linha foi alterada, retorna false (cliente não encontrado ou já inativo)
+            return false;
+        } catch (error) {
+            // Caso ocorra qualquer erro (conexão, sintaxe, etc.), registra no console com detalhes
+            console.error(`Erro ao remover cliente do banco de dados. ${error}`);
+            // Retorna false para indicar falha na operação
+            return false;
         }
     }
 }
