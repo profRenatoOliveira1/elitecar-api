@@ -1,0 +1,33 @@
+GET http://localhost:3333/api/carros
+
+###
+
+GET http://localhost:3333/api/carros/1
+
+###
+
+POST http://localhost:3333/api/carros
+Content-Type: application/json
+
+{
+    "marca": "HONDA",
+    "modelo": "CITY",
+    "ano": 2025,
+    "cor": "BRANCO"
+}
+
+###
+
+PUT http://localhost:3333/api/carros/1
+Content-Type: application/json
+
+{
+  "marca": "TOYOTA",
+  "modelo": "COROLLA",
+  "ano": 2022,
+  "cor": "PRETO"
+}
+
+###
+
+DELETE http://localhost:3333/api/carros/remover/9
